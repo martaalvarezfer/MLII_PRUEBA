@@ -1,4 +1,6 @@
 streamlit
-pillow
-matplotlib
+torch
+torchvision
+Pillow
 numpy
+
