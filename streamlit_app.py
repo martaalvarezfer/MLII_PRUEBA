@@ -97,7 +97,7 @@ def main():
         st.success(f'### Clase predicha: {class_name} (Confianza simulada: {round(prob, 5)})')
 
         # Mostrar la imagen cargada
-        st.image(image, caption='Imagen cargada', use_column_width=False)
+        st.image(image, caption='Imagen cargada', use_container_width=True)
     else:
         st.info("Por favor, carga una imagen para simular la clasificación.")
 
