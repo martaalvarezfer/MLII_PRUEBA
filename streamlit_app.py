@@ -3,10 +3,8 @@ from pathlib import Path
 import streamlit as st
 from PIL import Image
 import torch
-import torchvision
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-import torch.nn.functional as F
 import random
 
 # --- Variables y configuraciones ficticias ---
@@ -17,10 +15,6 @@ classnames = [f"Clase {i}" for i in range(num_classes)]
 Images_size = 224
 Images_types = ['jpg', 'jpeg', 'png']
 Disp_Models = ["Modelo A", "Modelo B"]  # Opciones dummy
-Models_paths = []  # No se usarán ya que no tenemos modelo real
-classification_models = ["resnext101_64x4d"]
-extra_models = []
-threshold = 0.1
 
 # --- Dataset personalizado para la imagen cargada ---
 class CustomImageDataset(Dataset):
@@ -49,11 +43,11 @@ def main():
     # Mensaje de bienvenida y explicación
     with st.container():
         st.markdown("""
-            ¡Bienvenido a precide que es esta imagen!
+            ¡Bienvenido!  
             Actualmente, <span style='color:red;'>estamos en construcción</span> para clasificar imágenes.
-            Los pasos son los siguiente:
-            1. Selecciona el modelo que deseas usar en la parte izquierda
-            2. Sube la imagen
+            Pasos:
+            1. Selecciona el modelo que deseas usar en la parte izquierda  
+            2. Sube la imagen  
             3. Verás la predicción para ella
         """, unsafe_allow_html=True)
 
@@ -61,13 +55,12 @@ def main():
     with st.sidebar:
         st.header("Configuraciones")
         
-        # Selector del modelo
+        # Selector del modelo (por ahora solo dummy)
         model_option = st.selectbox(
             "Modelo a Utilizar:",
             Disp_Models,
-            help="Selecciona el modelo de CNN."
+            help="Selecciona el modelo de CNN (simulación)."
         )
-        
 
     # Carga de la imagen
     with st.container():
@@ -75,6 +68,7 @@ def main():
 
     if image_file is not None:
         with st.spinner('Procesando imagen...'):
+            # Cargar la imagen con PIL y asegurar RGB
             image = Image.open(image_file).convert("RGB")
             img_size = Images_size
 
@@ -86,35 +80,23 @@ def main():
 
             # Crear un Dataset y DataLoader para la imagen cargada
             streamlit_data = CustomImageDataset(image, transform=streamlit_transforms)
-        streamlit_loader = DataLoader(streamlit_data, batch_size=1, shuffle=False)
-        
-        # --- Simulación de la clasificación ---
-        # Dado que no tenemos un modelo real, se simula una salida aleatoria
+            streamlit_loader = DataLoader(streamlit_data, batch_size=1, shuffle=False)
+
+        # --- Simulación de la clasificación (dummy) ---
         with st.spinner('Simulando la clasificación...'):
-            # Se genera una salida aleatoria (dummy) para num_classes
+            # Genera una salida aleatoria para 'num_classes'
             dummy_output = torch.rand(1, num_classes)
-            # Se obtienen las 2 clases con mayor "confianza" simulada
-            top_probs, top_classes = torch.topk(dummy_output, k=2, dim=1)
+            # Obtén la clase con mayor "confianza" simulada
+            _, top_class = torch.max(dummy_output, dim=1)
             
-            predicted_label_1 = top_classes[0][0].item()
-            predicted_label_2 = top_classes[0][1].item()
-            class_name_1 = classnames[predicted_label_1]
-            class_name_2 = classnames[predicted_label_2]
-            prob_1 = top_probs[0][0].item()
-            prob_2 = top_probs[0][1].item()
+            predicted_label = top_class.item()
+            class_name = classnames[predicted_label]
+            prob = dummy_output[0][predicted_label].item()
 
-            diff = prob_1 - prob_2
+        # Mostrar el resultado (solo top-1)
+        st.success(f'### Clase predicha: {class_name} (Confianza simulada: {round(prob, 5)})')
 
-        # Mostrar resultados en función del modo de clasificación
-        if classification_mode == "Single-class":
-            st.success(f'### Clase predicha: {class_name_1} (Confianza: {round(prob_1, 5)})')
-        else:
-            if diff > threshold:
-                st.success(f'### Clase predicha: {class_name_1} (Confianza: {round(prob_1, 5)})')
-            else:
-                st.success(f'### Clase 1: {class_name_1} (Confianza: {round(prob_1, 5)})')
-                st.success(f'### Clase 2: {class_name_2} (Confianza: {round(prob_2, 5)})')
-
+        # Mostrar la imagen cargada
         st.image(image, caption='Imagen cargada', use_column_width=False)
     else:
         st.info("Por favor, carga una imagen para simular la clasificación.")
