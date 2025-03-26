@@ -49,29 +49,25 @@ def main():
     # Mensaje de bienvenida y explicación
     with st.container():
         st.markdown("""
-            ¡Bienvenidos a la aplicación web Canonist.ia de clasificación de imágenes!
-            Actualmente, <span style='color:red;'>no disponemos de modelos entrenados</span> para clasificar imágenes.
-            La funcionalidad se simulará de manera dummy para mantener la estructura de la aplicación.
+            ¡Bienvenido a precide que es esta imagen!
+            Actualmente, <span style='color:red;'>estamos en construcción</span> para clasificar imágenes.
+            Los pasos son los siguiente:
+            1. Selecciona el modelo que deseas usar en la parte izquierda
+            2. Sube la imagen
+            3. Verás la predicción para ella
         """, unsafe_allow_html=True)
 
     # Configuraciones en la barra lateral
     with st.sidebar:
         st.header("Configuraciones")
-        # Selector de modo de clasificación
-        classification_mode = st.radio(
-            "Modo de Clasificación:",
-            ("Single-class", "Multi-class(Not available yet)"),
-            help="Selecciona 'Single-class' para obtener una categoría."
-        )
         
-        # Selector del modelo (opción dummy)
+        # Selector del modelo
         model_option = st.selectbox(
             "Modelo a Utilizar:",
             Disp_Models,
-            help="Selecciona el modelo de CNN (actualmente dummy)."
+            help="Selecciona el modelo de CNN."
         )
         
-        st.warning("Actualmente no disponemos de modelos entrenados. La clasificación se simulará.")
 
     # Carga de la imagen
     with st.container():
